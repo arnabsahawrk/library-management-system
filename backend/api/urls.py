@@ -12,7 +12,6 @@ router.register("authors", views.AuthorViewSet, basename="author")
 router.register("categories", views.CategoryViewSet, basename="category")
 router.register("books", views.BookViewSet, basename="book")
 router.register("members", views.MemberViewSet, basename="member")
-router.register("borrow-records", views.BorrowRecordViewSet, basename="borrow-record")
 
 books_router = routers.NestedDefaultRouter(router, "books", lookup="book")
 books_router.register(
