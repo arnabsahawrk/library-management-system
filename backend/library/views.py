@@ -52,8 +52,20 @@ class MemberViewSet(viewsets.ModelViewSet):
 
 
 class BorrowRecordViewSet(viewsets.ModelViewSet):
-    queryset = BorrowRecord.objects.select_related("book", "member")
     serializer_class = BorrowRecordSerializer
     filter_backends = [DjangoFilterBackend]
     filterset_class = BorrowRecordFilter
     pagination_class = DefaultPagination
+
+    def get_queryset(self):
+        queryset = BorrowRecord.objects.select_related("book", "member")
+
+        book_pk = self.kwargs.get("book_pk")
+        if book_pk:
+            queryset = queryset.filter(book_id=book_pk)
+
+        member_pk = self.kwargs.get("member_pk")
+        if member_pk:
+            queryset = queryset.filter(member_id=member_pk)
+
+        return queryset

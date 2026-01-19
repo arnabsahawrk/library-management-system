@@ -15,6 +15,7 @@ class Author(models.Model):
 class Category(models.Model):
     name = models.CharField(max_length=100)
     description = models.TextField(blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return self.name
@@ -26,7 +27,7 @@ class Book(models.Model):
     isbn = models.CharField(max_length=13, unique=True)
     author = models.ManyToManyField(Author, related_name="books")
     category = models.ForeignKey(
-        Category, on_delete=models.CASCADE, related_name="books"
+        Category, on_delete=models.PROTECT, related_name="books"
     )
     total_copies = models.PositiveIntegerField()
     available_copies = models.PositiveIntegerField()
@@ -47,13 +48,24 @@ class Member(models.Model):
 
 
 class BorrowRecord(models.Model):
-    Active, Returned, Overdue = "A", "R", "O"
-    Options = [(Active, "Active"), (Returned, "R"), (Overdue, "O")]
+    ACTIVE = "Active"
+    RETURNED = "Returned"
+    OVERDUE = "Overdue"
+
+    STATUS_CHOICES = [
+        (ACTIVE, "Active"),
+        (RETURNED, "Returned"),
+        (OVERDUE, "Overdue"),
+    ]
 
     id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
-    book = models.ForeignKey(Book, on_delete=models.CASCADE, related_name="book")
-    member = models.ForeignKey(Member, on_delete=models.CASCADE, related_name="member")
-    borrow_date = models.DateTimeField()
+    book = models.ForeignKey(
+        Book, on_delete=models.PROTECT, related_name="borrow_records"
+    )
+    member = models.ForeignKey(
+        Member, on_delete=models.CASCADE, related_name="borrow_records"
+    )
+    borrow_date = models.DateTimeField(auto_now_add=True)
     due_date = models.DateField()
-    return_date = models.DateTimeField()
-    status = models.CharField(max_length=1, choices=Options, default=Active)
+    return_date = models.DateTimeField(null=True, blank=True)
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default=ACTIVE)
