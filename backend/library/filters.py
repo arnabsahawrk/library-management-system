@@ -1,6 +1,6 @@
 from django_filters import rest_framework as filters
 
-from .models import Author, Book, BorrowRecord, Category, Member
+from .models import Author, Book, BorrowRecord, Category
 
 
 class AuthorFilter(filters.FilterSet):
@@ -30,20 +30,12 @@ class BookFilter(filters.FilterSet):
         fields = ["title", "isbn", "category_id", "author_id"]
 
 
-class MemberFilter(filters.FilterSet):
-    email = filters.CharFilter(field_name="email", lookup_expr="icontains")
-
-    class Meta:
-        model = Member
-        fields = ["email"]
-
-
 class BorrowRecordFilter(filters.FilterSet):
     status = filters.CharFilter(field_name="status", lookup_expr="exact")
-    member_id = filters.UUIDFilter(field_name="member_id")
+    user_id = filters.UUIDFilter(field_name="user_id")
     book_id = filters.UUIDFilter(field_name="book_id")
     due_date = filters.DateFromToRangeFilter(field_name="due_date")
 
     class Meta:
         model = BorrowRecord
-        fields = ["status", "member_id", "book_id", "due_date"]
+        fields = ["status", "user_id", "book_id", "due_date"]

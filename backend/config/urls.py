@@ -8,7 +8,7 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path("api-auth/", include("rest_framework.urls")),
     path("", RedirectView.as_view(url=reverse_lazy("api-root"), permanent=True)),
-    path("api/", include("api.urls"), name="api-root"),
+    path("api/v1/", include("api.urls"), name="api-root"),
 ]
 
 if settings.DEBUG:
